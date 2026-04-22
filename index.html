@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardiology Flashcards — Clinical Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f2ee;
+    --surface: #ffffff;
+    --surface2: #f9f8f6;
+    --border: #ddd8d0;
+    --border-strong: #b8b0a5;
+    --text: #1a1714;
+    --text-secondary: #5a524a;
+    --text-muted: #9a9088;
+    --accent: #b5212e;
+    --accent-blue: #1a4f7a;
+    --accent-light: #f0ece5;
+    --correct: #1a6641;
+    --correct-bg: #edf7f1;
+    --correct-border: #a8d5b8;
+    --wrong: #962020;
+    --wrong-bg: #fdf1f1;
+    --wrong-border: #f0b8b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    width: 100%;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .institution-line {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .header-rule {
+    width: 36px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin-bottom: 0.3rem;
+  }
+
+  .subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  /* ── MAIN WRAPPER ── */
+  .wrapper {
+    width: 100%;
+    max-width: 780px;
+    padding: 1.5rem 1.5rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── FILTER ROW ── */
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .filter-btn:hover {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  /* ── CARD PANEL ── */
+  .card-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2rem;
+    display: none;
+    flex-direction: column;
+    min-height: 380px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+  }
+
+  .card-panel.active { display: flex; }
+
+  /* ── CATEGORY TAG ── */
+  .category-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    width: fit-content;
+    font-weight: 500;
+  }
+
+  .cat-arrhythmia { background: #fdf0f0; color: #9b1c1c; border: 1px solid #f0c0c0; }
+  .cat-hf         { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+  .cat-cad        { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+  .cat-endo       { background: #f0fdf4; color: #14532d; border: 1px solid #bbf7d0; }
+  .cat-aorta      { background: #faf5ff; color: #581c87; border: 1px solid #e9d5ff; }
+  .cat-htn        { background: #fefce8; color: #713f12; border: 1px solid #fef08a; }
+  .cat-valve      { background: #fff1f2; color: #881337; border: 1px solid #fecdd3; }
+
+  .card-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .question-text {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 0.96rem;
+    line-height: 1.72;
+    color: var(--text);
+    margin-bottom: 1.6rem;
+  }
+
+  /* ── OPTIONS ── */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: auto;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--surface2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text);
+    text-align: left;
+    width: 100%;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent-blue);
+    background: #eff5fb;
+    color: var(--accent-blue);
+  }
+
+  .option.correct {
+    border-color: var(--correct-border);
+    background: var(--correct-bg);
+    color: var(--correct);
+  }
+
+  .option.wrong {
+    border-color: var(--wrong-border);
+    background: var(--wrong-bg);
+    color: var(--wrong);
+  }
+
+  .option.disabled { cursor: default; }
+
+  .option-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    min-width: 18px;
+    padding-top: 2px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .option.correct .option-letter { color: var(--correct); }
+  .option.wrong .option-letter   { color: var(--wrong); }
+
+  .flip-hint {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 1.2rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  /* ── ANSWER PANEL ── */
+  .answer-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--correct);
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+
+  .correct-answer-text {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--correct);
+    margin-bottom: 1.1rem;
+    line-height: 1.4;
+  }
+
+  .explanation {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 0.87rem;
+    line-height: 1.78;
+    color: var(--text-secondary);
+    padding: 0.9rem 1.1rem;
+    background: var(--surface2);
+    border-left: 3px solid var(--accent-blue);
+    border-radius: 0 2px 2px 0;
+    margin-bottom: 1.2rem;
+  }
+
+  .key-points {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+  }
+
+  .key-point {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  .key-point::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    margin-top: 1px;
+  }
+
+  /* ── NAVIGATION ── */
+  .nav-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.55rem 1.2rem;
+    border-radius: 2px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .nav-btn:hover:not(:disabled) {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    background: #eff5fb;
+  }
+
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .nav-btn.primary {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #fff;
+    flex: 1;
+    text-align: center;
+  }
+
+  .nav-btn.primary:hover:not(:disabled) {
+    background: #163d60;
+    border-color: #163d60;
+    color: #fff;
+  }
+
+  /* ── COMPLETED ── */
+  .completed {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .completed.visible { display: flex; }
+
+  .completed-rule { width: 36px; height: 2px; background: var(--accent); }
+
+  .completed-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .final-score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .final-score-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+    padding: 1.1rem 1.5rem;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+
+  #mainArea { width: 100%; display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="institution-line">Cardiology Residency Programme</div>
+    <div class="header-rule"></div>
+    <h1>Clinical Cardiology Flashcards</h1>
+    <div class="subtitle">Diagnosis &nbsp;·&nbsp; Investigation &nbsp;·&nbsp; Management &nbsp;·&nbsp; 50 Cards</div>
+  </div>
+</header>
+
+<div class="wrapper">
+  <div class="filter-row" id="filterRow"></div>
+
+  <div id="mainArea">
+    <div class="progress-bar-row">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:2%"></div></div>
+      <div class="progress-label" id="progressText">1 / 50</div>
+      <div class="score-label" id="scoreBadge">Score: 0</div>
+    </div>
+
+    <div class="card-panel active" id="cardFront"></div>
+    <div class="card-panel" id="cardBack"></div>
+
+    <div class="nav-row">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Previous</button>
+      <button class="nav-btn primary" id="flipBtn" onclick="flipCard()">View Explanation</button>
+      <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+    </div>
+  </div>
+
+  <div class="completed" id="completedScreen">
+    <div class="completed-rule"></div>
+    <div class="completed-title">Deck Complete</div>
+    <div class="final-score-label">Your Score</div>
+    <div class="final-score-num" id="finalScoreNum"></div>
+    <button class="nav-btn primary" style="max-width:200px;width:100%;flex:none" onclick="restart()">Restart Deck</button>
+  </div>
+</div>
+
+<footer>Created by Dr Bharat Sidhu</footer>
+
+<script>
+const cards = [
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 68-year-old man presents with palpitations and an irregularly irregular pulse. His ECG shows absent P waves and a ventricular rate of 110 bpm. Which pharmacological agent is most appropriate for rate control if he has no structural heart disease?",
+    opts: ["Amiodarone", "Digoxin", "Diltiazem", "Flecainide"],
+    ans: 2,
+    explanation: "Diltiazem (a non-dihydropyridine calcium channel blocker) is appropriate first-line rate control in AF without structural heart disease. Digoxin is less effective during exercise. Flecainide is for rhythm control, not rate control. Amiodarone is reserved for refractory cases.",
+    points: ["Rate control target: resting HR <110 bpm (RACE II trial)", "Avoid CCBs in systolic HF; use beta-blocker or digoxin instead", "CHADS₂-VASc guides anticoagulation decision"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 24-year-old athlete collapses during training. ECG shows a short PR interval (0.10s) with a slurred upstroke on the QRS and a delta wave. Which condition does this describe?",
+    opts: ["Brugada syndrome", "Long QT syndrome", "Wolff-Parkinson-White syndrome", "AVNRT"],
+    ans: 2,
+    explanation: "WPW is characterised by a short PR interval, delta wave (slurred QRS upstroke), and widened QRS due to ventricular pre-excitation via an accessory pathway (Bundle of Kent). It can cause life-threatening tachyarrhythmias.",
+    points: ["Avoid AV nodal blockers (adenosine, verapamil) in WPW with AF — may cause VF", "Definitive treatment: radiofrequency catheter ablation", "Risk stratify with electrophysiology study in symptomatic patients"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A patient has recurrent episodes of SVT terminated by adenosine. Electrophysiology study reveals dual AV nodal pathways. What is the most likely diagnosis?",
+    opts: ["Atrial flutter", "AVNRT", "Atrial tachycardia", "Junctional ectopic tachycardia"],
+    ans: 1,
+    explanation: "AVNRT (atrioventricular nodal re-entrant tachycardia) is the most common regular SVT. It involves dual AV nodal pathways — a fast pathway and a slow pathway — forming a re-entrant circuit. ECG typically shows narrow QRS with retrograde P waves buried in or just after the QRS complex.",
+    points: ["Acute: vagal manoeuvres → adenosine → verapamil", "Long-term: slow pathway ablation has >95% cure rate", "Distinguish from AVRT (accessory pathway): subtle ECG differences"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 55-year-old woman is found unresponsive. ECG monitor shows a rapid, irregular, polymorphic ventricular tachycardia. Her QTc is 560ms on baseline ECG. What is the most likely rhythm?",
+    opts: ["Ventricular fibrillation", "Torsades de pointes", "Accelerated idioventricular rhythm", "Monomorphic VT"],
+    ans: 1,
+    explanation: "Torsades de pointes (TdP) is a form of polymorphic VT associated with prolonged QT interval. The characteristic ECG appearance shows twisting of the QRS axis around the baseline. Common causes include electrolyte abnormalities (hypokalaemia, hypomagnesaemia) and QT-prolonging drugs.",
+    points: ["Treatment: IV magnesium sulphate 2g even if Mg²⁺ normal", "Correct electrolytes; identify and remove offending drugs", "Consider isoproterenol or pacing to increase heart rate and shorten QT"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 70-year-old man with ischaemic cardiomyopathy (EF 25%) has sustained monomorphic VT. He is haemodynamically stable. After cardioversion to sinus rhythm, which long-term therapy has the strongest mortality benefit?",
+    opts: ["Amiodarone alone", "Implantable cardioverter-defibrillator (ICD)", "Flecainide", "Mexiletine"],
+    ans: 1,
+    explanation: "In patients with structural heart disease and sustained VT/VF, ICD implantation is the gold standard for secondary prevention of sudden cardiac death, with superior mortality benefit over antiarrhythmic drugs including amiodarone (AVID, CIDS, CASH trials).",
+    points: ["Amiodarone can be used as adjunct to reduce ICD shocks", "Catheter ablation reduces VT burden but doesn't replace ICD", "Primary prevention ICD: EF ≤35% despite optimal therapy ≥3 months"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "ECG shows regular sawtooth flutter waves at 300 bpm with 2:1 AV block, giving a ventricular rate of 150 bpm. What is the most appropriate initial pharmacological management?",
+    opts: ["IV flecainide", "IV adenosine for rhythm control", "IV beta-blocker or diltiazem for rate control", "Oral digoxin loading"],
+    ans: 2,
+    explanation: "Atrial flutter at 300 bpm with 2:1 block typically gives a ventricular rate of 150 bpm. Rate control with IV beta-blockers or diltiazem is appropriate first-line. Cardioversion is used if haemodynamically unstable or for definitive rhythm control. Catheter ablation (cavotricuspid isthmus ablation) is curative.",
+    points: ["Atrial flutter: atrial rate ≈ 300 bpm; ventricular rate depends on AV conduction ratio", "Anticoagulate as for AF if >48h duration or unknown onset", "CTI ablation has >90% success rate for typical flutter"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "A 65-year-old man with HFrEF (EF 28%) is on maximally tolerated ACEi and beta-blocker. What additional therapy provides both morbidity and mortality benefit?",
+    opts: ["Amlodipine", "Spironolactone (MRA)", "Ivabradine", "Digoxin"],
+    ans: 1,
+    explanation: "Mineralocorticoid receptor antagonists (MRAs) such as spironolactone or eplerenone reduce mortality and hospitalisation in HFrEF when added to ACEi and beta-blocker (RALES, EMPHASIS-HF trials). Monitor for hyperkalaemia and renal impairment.",
+    points: ["'Fantastic Four' in HFrEF: ACEi/ARNi, beta-blocker, MRA, SGLT2i", "Eplerenone preferred in males (less gynaecomastia)", "Contraindications: K⁺ >5.0 mmol/L, eGFR <30 ml/min/1.73m²"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "A patient with HFrEF (EF 22%) has LBBB and QRS duration of 155ms despite optimal medical therapy. Which device therapy is most appropriate?",
+    opts: ["ICD only", "Cardiac resynchronisation therapy with defibrillator (CRT-D)", "Pacemaker for rate support", "No device therapy indicated"],
+    ans: 1,
+    explanation: "CRT-D is indicated in symptomatic HFrEF (NYHA II–IV) with EF ≤35%, LBBB, and QRS ≥150ms despite optimal medical therapy. CRT improves symptoms, exercise capacity, LV function and mortality. The defibrillator component also protects against sudden death.",
+    points: ["Greatest benefit with LBBB morphology and QRS ≥150ms", "LBBB + QRS 130–149ms: may still benefit (consider CRT-D)", "Non-LBBB and QRS 120–149ms: less clear benefit"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "A 58-year-old woman is admitted with acute decompensated heart failure. BP is 90/60 mmHg and she is cool peripherally. Which haemodynamic profile does this represent?",
+    opts: ["Warm and wet (volume overload)", "Cold and dry (cardiogenic shock with low filling)", "Cold and wet (cardiogenic shock)", "Warm and dry (euvolaemia, good output)"],
+    ans: 2,
+    explanation: "The 'cold and wet' profile reflects reduced cardiac output (cold/hypoperfused peripheries) with elevated filling pressures (pulmonary congestion/wet). This is the most severe presentation and may require inotropes, vasopressors, or mechanical circulatory support.",
+    points: ["Cold and wet: low output + congestion → inotrope ± vasopressor ± MCS", "Warm and wet: euvolaemic output + congestion → diuresis", "Cold and dry: low output without congestion → cautious volume, inotrope"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "Which natriuretic peptide level at presentation is most consistent with acute decompensated heart failure as the cause of acute dyspnoea?",
+    opts: ["BNP 40 pg/mL", "NT-proBNP 200 pg/mL", "BNP 800 pg/mL", "NT-proBNP 100 pg/mL"],
+    ans: 2,
+    explanation: "A BNP >100 pg/mL or NT-proBNP >300 pg/mL strongly supports acute HF. Values in the 'grey zone' (BNP 100–400) require clinical correlation. BNP >500 or NT-proBNP >900 (age-adjusted) are highly specific for acute decompensated HF.",
+    points: ["BNP can be falsely low in obesity, flash pulmonary oedema", "NT-proBNP cut-offs are age-adjusted: >450 (<50y), >900 (50–75y), >1800 (>75y)", "BNP is reduced by sacubitril; interpret with caution in patients on ARNi"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "A 72-year-old woman with dyspnoea on exertion has preserved EF (60%) on echo with diastolic dysfunction and elevated LV filling pressures. What is the correct diagnosis?",
+    opts: ["HFrEF", "HFmrEF", "HFpEF", "Restrictive cardiomyopathy (unclassified)"],
+    ans: 2,
+    explanation: "HFpEF (Heart Failure with preserved Ejection Fraction) is defined as symptoms/signs of HF with EF ≥50% and evidence of elevated LV filling pressures. It accounts for ~50% of HF cases and is strongly associated with hypertension, obesity, diabetes, and atrial fibrillation.",
+    points: ["SGLT2 inhibitors (empagliflozin, dapagliflozin) shown to reduce HF hospitalisation in HFpEF", "Manage underlying risk factors: HTN, AF, obesity, diabetes", "No mortality benefit proven for ACEi/ARBs/beta-blockers in HFpEF"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A 60-year-old man presents with 40 minutes of crushing central chest pain radiating to his left arm. ECG shows ST elevation in leads II, III, aVF. Which coronary artery is most likely occluded?",
+    opts: ["Left anterior descending artery", "Left circumflex artery", "Right coronary artery", "Left main stem"],
+    ans: 2,
+    explanation: "Inferior STEMI (ST elevation in II, III, aVF) is most commonly caused by occlusion of the right coronary artery (RCA), which supplies the inferior wall in ~80% of patients (right-dominant circulation). Always check right-sided leads (V3R, V4R) for RV infarction.",
+    points: ["RV infarct: ST elevation V4R, hypotension, clear lungs — avoid nitrates and diuretics", "Posterior extension: tall R and ST depression in V1–V2", "Door-to-balloon time target: <90 minutes for primary PCI"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A patient presents with NSTEMI. Risk stratification using GRACE score shows high risk. What is the recommended management strategy?",
+    opts: ["Fibrinolysis within 12 hours", "Invasive strategy (coronary angiography) within 24 hours", "Conservative medical management only", "Elective angiography in 4–6 weeks"],
+    ans: 1,
+    explanation: "High-risk NSTEMI/UA patients (GRACE score >140, elevated troponins, dynamic ECG changes) should undergo early invasive strategy with coronary angiography within 24 hours. Very high-risk features (refractory ischaemia, haemodynamic instability) warrant immediate (<2h) angiography.",
+    points: ["Dual antiplatelet therapy: aspirin + P2Y12 inhibitor (ticagrelor or prasugrel preferred over clopidogrel)", "Anticoagulation: fondaparinux preferred in conservative strategy; UFH/enoxaparin for invasive", "GRACE score >140 = high risk; >200 = very high risk"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A 55-year-old diabetic woman undergoes elective PCI with drug-eluting stent for stable angina. Dual antiplatelet therapy (DAPT) should be continued for a minimum of:",
+    opts: ["1 month", "3 months", "6 months", "12 months"],
+    ans: 2,
+    explanation: "Following elective PCI with a drug-eluting stent (DES), current ESC guidelines recommend DAPT (aspirin + P2Y12 inhibitor) for 6 months in stable CAD, unless high bleeding risk (HBR) justifies early de-escalation to 1–3 months. ACS patients require 12 months minimum.",
+    points: ["DES requires longer DAPT than bare-metal stent to prevent late stent thrombosis", "HBR criteria: ARC-HBR score guides duration shortening", "Assess ischaemic vs bleeding risk individually using PRECISE-DAPT or DAPT score"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "Which investigation is the most appropriate next step in a 45-year-old with typical stable angina symptoms and intermediate pre-test probability of CAD?",
+    opts: ["CT coronary angiography (CTCA)", "Exercise ECG treadmill test", "Resting ECG", "Coronary angiography"],
+    ans: 0,
+    explanation: "Current NICE and ESC guidelines recommend CT coronary angiography (CTCA) as the first-line investigation for stable chest pain with intermediate pre-test probability of CAD. CTCA has high negative predictive value and can identify non-obstructive CAD and plaque burden.",
+    points: ["CTCA has largely replaced exercise testing as the initial investigation", "Calcium scoring (CAC) can help risk-stratify asymptomatic individuals", "Fractional flow reserve (FFR-CT) can be used functionally to assess haemodynamic significance"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A post-MI patient has LV EF 30%, is asymptomatic and on optimal medical therapy for 6 weeks. ECG shows QRS 110ms, no LBBB. What is the mortality benefit intervention?",
+    opts: ["Routine coronary angiography", "ICD for primary prevention of SCD", "Cardiac resynchronisation therapy", "Statin dose escalation"],
+    ans: 1,
+    explanation: "Primary prevention ICD is indicated in patients with EF ≤35% after MI who are on optimal medical therapy for at least 3 months (and at least 40 days post-MI). The MADIT-II and SCD-HeFT trials demonstrated significant survival benefit from prophylactic ICD in ischaemic cardiomyopathy.",
+    points: ["Reassess EF after 3 months of optimal therapy — it may improve and ICD may not be needed", "EF assessment should be >40 days post-MI for accurate prognostication", "EF >35%: pharmacotherapy alone; no ICD benefit shown"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A patient with three-vessel disease and diabetes presents with stable angina. Based on the SYNTAX trial, what revascularisation strategy improves long-term outcomes most?",
+    opts: ["Medical therapy alone", "PCI with DES", "CABG", "Hybrid PCI/CABG"],
+    ans: 2,
+    explanation: "The SYNTAX trial and subsequent FREEDOM trial demonstrated that in patients with three-vessel CAD, especially with diabetes and high SYNTAX score, CABG is superior to PCI in reducing the composite of death, MI, and stroke at 5 years.",
+    points: ["SYNTAX score guides revascularisation: high score (>32) favours CABG", "Diabetes independently favours CABG over PCI (FREEDOM trial)", "Heart team approach recommended for complex CAD"]
+  },
+  {
+    cat: "endo", catLabel: "Endocarditis",
+    q: "A 45-year-old intravenous drug user presents with fever, new tricuspid regurgitation murmur, and septic pulmonary emboli on CT. Blood cultures grow Staphylococcus aureus. What is the most common pathogen in right-sided endocarditis in IVDU?",
+    opts: ["Streptococcus viridans", "Staphylococcus aureus", "Enterococcus faecalis", "HACEK organisms"],
+    ans: 1,
+    explanation: "Staphylococcus aureus is the dominant pathogen in IV drug user-associated infective endocarditis, particularly affecting the tricuspid valve. It is also the most common cause of acute endocarditis and carries a high mortality. MRSA must be considered.",
+    points: ["IVDU endocarditis: right-sided (tricuspid) in 60–70%; S. aureus most common", "Treat S. aureus: flucloxacillin 6 weeks; MRSA: vancomycin ± rifampicin", "Modified Duke criteria for diagnosis: 2 major, 1 major + 3 minor, or 5 minor"]
+  },
+  {
+    cat: "endo", catLabel: "Endocarditis",
+    q: "A 62-year-old man has fever, new aortic regurgitation, and three positive blood cultures for viridans streptococci. Echo shows a 12mm vegetation. Which finding would be a surgical indication?",
+    opts: ["Single blood culture positivity", "Vegetation size 8mm with no other features", "New severe AR with acute heart failure", "Fever persisting for 5 days on antibiotics"],
+    ans: 2,
+    explanation: "New severe valvular regurgitation causing acute heart failure is a Class I surgical indication in infective endocarditis. Other surgical indications include uncontrolled infection (abscess, fistula), large vegetation (>10mm with prior embolism or high risk), and fungal endocarditis.",
+    points: ["Surgical indications: HF, uncontrolled infection, high embolic risk", "Vegetation >10mm with prior embolic event or high mobility → consider surgery", "Timing: urgent (within days) for HF; elective for prophylactic indications"]
+  },
+  {
+    cat: "endo", catLabel: "Endocarditis",
+    q: "Prophylaxis against infective endocarditis is recommended prior to dental procedures in which of the following patients?",
+    opts: ["Mitral valve prolapse with trace MR", "Hypertrophic cardiomyopathy without outflow tract obstruction", "Previous IE with prosthetic aortic valve replacement", "Atrial septal defect (secundum type)"],
+    ans: 2,
+    explanation: "IE prophylaxis (amoxicillin 3g oral 30–60 min pre-procedure, or clindamycin 600mg if penicillin-allergic) is indicated only in highest-risk patients: previous IE, prosthetic valve, cardiac transplant with valvulopathy, and certain congenital heart defects.",
+    points: ["Highest risk group → prophylaxis with dental procedures", "Amoxicillin 3g PO (UK) or 2g PO (US) 30–60 min before procedure", "Good dental hygiene is more important than prophylaxis for prevention"]
+  },
+  {
+    cat: "endo", catLabel: "Endocarditis",
+    q: "A 30-year-old with prosthetic aortic valve has IE due to Staphylococcus epidermidis. Which antibiotic combination is recommended?",
+    opts: ["Amoxicillin monotherapy 6 weeks", "Vancomycin + rifampicin + gentamicin", "Flucloxacillin alone", "Ceftriaxone monotherapy"],
+    ans: 1,
+    explanation: "Prosthetic valve endocarditis (PVE) with coagulase-negative staphylococci (e.g. S. epidermidis), which are usually methicillin-resistant, requires vancomycin + rifampicin (for biofilm penetration) + gentamicin for the first 2 weeks. Total duration 6 weeks.",
+    points: ["Rifampicin is key in PVE due to biofilm penetration — do not use as monotherapy", "Gentamicin added for first 2 weeks only (nephrotoxicity risk)", "Methicillin-susceptible S. aureus PVE: flucloxacillin + rifampicin + gentamicin"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "A 55-year-old man presents to ED with sudden-onset tearing chest pain radiating to the back. BP is 160/90 in the right arm and 110/70 in the left arm. CXR shows widened mediastinum. What is the most likely diagnosis?",
+    opts: ["Pulmonary embolism", "STEMI", "Type A aortic dissection", "Oesophageal rupture"],
+    ans: 2,
+    explanation: "Type A aortic dissection (involving the ascending aorta) presents with sudden tearing/ripping chest pain, inter-arm blood pressure difference (>20mmHg), and widened mediastinum on CXR. It is a surgical emergency with mortality of 1–2% per hour if untreated.",
+    points: ["Type A: ascending aorta involved → emergency surgery", "Type B: descending only → medical management (BP control) unless complicated", "CT aortogram is gold standard; TOE if CT not immediately available"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "A 68-year-old ex-smoker is found to have an incidental 4.8cm infra-renal abdominal aortic aneurysm (AAA) on ultrasound. What is the most appropriate management?",
+    opts: ["Emergency surgical repair", "Elective repair (open or EVAR) within 2 weeks", "Interval surveillance ultrasound and risk factor modification", "Statin therapy only"],
+    ans: 2,
+    explanation: "AAAs <5.5cm in men (<5.0cm in women) are generally managed with surveillance and cardiovascular risk factor modification. Repair is indicated for aneurysms ≥5.5cm, rapidly expanding (>1cm/year), or symptomatic. EVAR is preferred over open repair in eligible patients.",
+    points: ["Surveillance intervals: 3.0–4.4cm → annual; 4.5–5.4cm → 3-monthly", "Threshold for repair: ≥5.5cm (men), ≥5.0cm (women), or symptomatic/rapidly growing", "EVAR vs open: EVAR has lower 30-day mortality but similar long-term survival (EVAR-1)"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "A 35-year-old woman with Marfan syndrome is found to have an ascending aorta diameter of 47mm. She wishes to become pregnant. What is the threshold for prophylactic aortic root replacement in Marfan syndrome?",
+    opts: ["45mm", "50mm", "55mm", "60mm"],
+    ans: 0,
+    explanation: "In Marfan syndrome, prophylactic aortic root/ascending aorta replacement is recommended when the diameter reaches 45mm (or <45mm if family history of dissection, rapid progression >3mm/year, or severe aortic/mitral valve disease). Pregnancy increases dissection risk further.",
+    points: ["Marfan: lower threshold for intervention than general population", "Bisoprolol and/or losartan slow aortic dilation in Marfan syndrome", "All patients should undergo genetic counselling and family screening"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "Management of uncomplicated Type B aortic dissection should include which of the following as initial therapy?",
+    opts: ["Emergency surgical repair", "Thrombolysis", "Heart rate and blood pressure control (IV labetalol or esmolol)", "Immediate TEVAR (thoracic endovascular aortic repair)"],
+    ans: 2,
+    explanation: "Uncomplicated Type B dissection (no malperfusion, rupture, or refractory pain/hypertension) is managed medically with IV beta-blockers (labetalol, esmolol) to target HR <60 bpm and SBP 100–120 mmHg. TEVAR is considered for complicated Type B dissection.",
+    points: ["Complicated Type B: malperfusion, rupture, refractory HTN/pain → TEVAR", "Target: HR <60, SBP 100–120 mmHg in acute phase", "Long-term: oral antihypertensives, imaging surveillance at 1, 3, 6 months then annually"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "A 52-year-old woman has a clinic BP of 158/96 mmHg on two occasions. ABPM confirms Stage 2 hypertension (mean daytime 150/95). She has no other comorbidities. What is the first-line treatment?",
+    opts: ["ARB monotherapy", "Thiazide diuretic monotherapy", "ACE inhibitor or calcium channel blocker", "Beta-blocker monotherapy"],
+    ans: 2,
+    explanation: "NICE guidelines recommend ACE inhibitor (or ARB if ACEi not tolerated) as first-line in patients <55 years, and a calcium channel blocker (CCB) as first-line in patients ≥55 years or Afro-Caribbean patients of any age. Beta-blockers are not first-line in hypertension.",
+    points: ["NICE step 1: ACEi/ARB (<55y or DM) or CCB (≥55y or Afro-Caribbean)", "Step 2: ACEi/ARB + CCB; Step 3: add thiazide-like diuretic (indapamide)", "Resistant HTN (Step 4): add low-dose spironolactone if K⁺ <4.5 mmol/L"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "A hypertensive patient with CKD (eGFR 32, proteinuria 3+) and diabetes requires antihypertensive therapy. Which agent is most important to include?",
+    opts: ["Amlodipine alone", "ACE inhibitor or ARB", "Loop diuretic", "Hydralazine"],
+    ans: 1,
+    explanation: "ACE inhibitors and ARBs provide renoprotective effects beyond BP lowering in CKD patients with proteinuria and diabetes by reducing intraglomerular pressure and proteinuria. They are first-line in diabetic nephropathy and CKD with albuminuria.",
+    points: ["Monitor eGFR and K⁺ at 1–2 weeks after initiation or dose change", "A ≤30% rise in creatinine is acceptable and does not mandate stopping ACEi/ARB", "Target BP in CKD with proteinuria: <130/80 mmHg (ESC/ESH guidelines)"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "A 42-year-old woman is referred for hypertension. BP is 175/105 despite three antihypertensives. She has hypokalaemia (K⁺ 3.1) and elevated aldosterone:renin ratio. What is the likely diagnosis?",
+    opts: ["Phaeochromocytoma", "Cushing's syndrome", "Primary hyperaldosteronism (Conn's syndrome)", "Renovascular hypertension"],
+    ans: 2,
+    explanation: "Primary hyperaldosteronism (Conn's syndrome) presents with hypertension (often resistant), hypokalaemia, and elevated aldosterone:renin ratio >30. It is the commonest cause of secondary hypertension. Causes include adrenal adenoma (unilateral) and bilateral adrenal hyperplasia.",
+    points: ["Screening test: aldosterone:renin ratio (ARR) >30 (with elevated aldosterone)", "Confirmatory tests: fludrocortisone suppression test or saline infusion test", "Unilateral adenoma → adrenalectomy; bilateral hyperplasia → spironolactone/eplerenone"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "Hypertensive emergency with hypertensive encephalopathy (BP 230/130, confusion, papilloedema). What is the target BP reduction in the first hour?",
+    opts: ["Reduce BP to normal within 30 minutes", "Reduce mean arterial pressure (MAP) by no more than 25% in first hour", "Reduce systolic BP by 50 mmHg within 2 hours", "No immediate treatment needed; oral agents only"],
+    ans: 1,
+    explanation: "In hypertensive emergencies, the recommendation is to reduce MAP by no more than 25% in the first hour using IV agents (labetalol, nicardipine, or sodium nitroprusside). Over-rapid reduction risks cerebral, cardiac, or renal ischaemia.",
+    points: ["IV labetalol or nicardipine are preferred in most hypertensive emergencies", "Aortic dissection: more aggressive BP reduction (target SBP <120 mmHg within 20 min)", "Ischaemic stroke: only treat if BP >220/120 mmHg (unless thrombolysis planned)"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "A 38-year-old woman presents with episodic palpitations, sweating, and severe headaches. BP is 220/115 during an episode. 24-hour urine shows elevated metanephrines. What is the likely diagnosis?",
+    opts: ["Essential hypertension", "Carcinoid syndrome", "Phaeochromocytoma", "Hyperthyroidism"],
+    ans: 2,
+    explanation: "Phaeochromocytoma presents with the classic triad of episodic hypertension, headache, palpitations, and diaphoresis. Biochemical diagnosis is confirmed by elevated plasma or urinary metanephrines. CT/MRI adrenal and MIBG scan are used for localisation.",
+    points: ["Alpha-blockade (phenoxybenzamine or doxazosin) FIRST, then beta-blocker", "Never give beta-blocker alone (risk of unopposed alpha-vasoconstriction and hypertensive crisis)", "Rule out MEN2, NF1, VHL in all patients with phaeochromocytoma"]
+  },
+  {
+    cat: "valve", catLabel: "Valvular Disease",
+    q: "A 78-year-old man has severe calcific aortic stenosis (AVA 0.7cm², mean gradient 55 mmHg, EF 35%) with exertional syncope. He is frail with multiple comorbidities. What treatment is most appropriate?",
+    opts: ["Medical management with diuretics", "Surgical aortic valve replacement (SAVR)", "Transcatheter aortic valve implantation (TAVI)", "Balloon aortic valvuloplasty alone"],
+    ans: 2,
+    explanation: "TAVI is the preferred option for high-surgical-risk patients with severe symptomatic AS. For intermediate-risk patients, outcomes with TAVI are comparable to SAVR (PARTNER, SURTAVI trials). For low-risk patients, both are options with shared decision-making.",
+    points: ["Indications for intervention: AVA <1.0cm², symptomatic (syncope, angina, dyspnoea)", "TAVI: higher risk, older patients; SAVR: lower risk, younger patients (<75y)", "Severe AS has average survival <2–3 years once symptomatic without intervention"]
+  },
+  {
+    cat: "valve", catLabel: "Valvular Disease",
+    q: "A 45-year-old woman with rheumatic mitral stenosis has NYHA class III dyspnoea. Echo shows MVA 0.9cm², pliable non-calcified leaflets, no MR, Wilkins score 7. What is the preferred intervention?",
+    opts: ["Medical therapy with diuretics alone", "Surgical mitral valve replacement", "Percutaneous mitral balloon commissurotomy (PMBC)", "Surgical valvotomy"],
+    ans: 2,
+    explanation: "PMBC (balloon mitral valvuloplasty) is the preferred treatment for symptomatic mitral stenosis with favourable valve morphology (Wilkins score ≤8, pliable non-calcified leaflets, absent or mild MR, absence of left atrial thrombus). It achieves excellent medium to long-term results.",
+    points: ["Wilkins score ≤8 with no significant MR/thrombus → PMBC first-line", "MVR if PMBC not feasible or failed", "Anticoagulate in MS + AF regardless of CHA₂DS₂-VASc score"]
+  },
+  {
+    cat: "valve", catLabel: "Valvular Disease",
+    q: "A 55-year-old man has chronic severe primary mitral regurgitation. He is asymptomatic with LV EF 55% and LV end-systolic diameter 38mm. What is the correct management?",
+    opts: ["ACE inhibitor to delay surgery", "Watchful waiting with 6-monthly echo", "Mitral valve repair or replacement now", "Diuretic therapy"],
+    ans: 1,
+    explanation: "Asymptomatic severe primary MR with preserved EF (>60%) and LVESD <40mm can be managed with watchful waiting and regular echo surveillance. Surgery (repair preferred) is triggered by symptoms, EF <60%, LVESD ≥40mm, new AF, or pulmonary hypertension.",
+    points: ["Surgery triggers in asymptomatic severe MR: EF <60%, LVESD ≥40mm, new AF or PH", "Repair > replacement (lower mortality, preserves LV function)", "Mitral valve repair centre of excellence: >95% repair rate in degenerative MR"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 26-year-old man with no past history has a VF arrest at rest. ECG in sinus rhythm shows right bundle branch block pattern with ST elevation in V1–V3. His father died suddenly at age 32. What is the most likely diagnosis?",
+    opts: ["Hypertrophic cardiomyopathy", "Brugada syndrome", "ARVC", "Long QT syndrome type 1"],
+    ans: 1,
+    explanation: "Brugada syndrome is characterised by a Type 1 ECG pattern (coved ST elevation ≥2mm in V1–V3 with RBBB morphology), spontaneous or fever-induced, with a risk of VF and SCD. It is autosomal dominant (SCN5A mutation). ICD is indicated after aborted SCD.",
+    points: ["Three ECG patterns: Type 1 (diagnostic coved), Types 2 and 3 (saddle-back)", "Fever can unmask Brugada pattern and precipitate VF", "ICD after aborted VF/SCD; quinidine may be used adjunctively"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "Which SGLT2 inhibitor demonstrated significant reduction in CV death and HF hospitalisation in patients with HFrEF in the DAPA-HF trial?",
+    opts: ["Empagliflozin", "Canagliflozin", "Dapagliflozin", "Ertugliflozin"],
+    ans: 2,
+    explanation: "Dapagliflozin was studied in the DAPA-HF trial and demonstrated a significant reduction in the composite of CV death, worsening HF, or HF hospitalisation in HFrEF patients regardless of diabetes status. Both dapagliflozin and empagliflozin (EMPEROR-Reduced) are now guideline-recommended in HFrEF.",
+    points: ["SGLT2i mechanism in HF: osmotic diuresis, reduction in pre/afterload, anti-inflammatory, metabolic effects", "Benefit seen regardless of diabetes status", "Both dapagliflozin and empagliflozin are included in ESC 2021 HF guidelines Class I, Level A"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A patient post-STEMI starts high-intensity statin therapy. What LDL-C target is recommended for secondary prevention of ASCVD?",
+    opts: ["<3.0 mmol/L", "<2.6 mmol/L", "<1.8 mmol/L", "<1.4 mmol/L"],
+    ans: 3,
+    explanation: "ESC 2019 and 2021 guidelines recommend an LDL-C target of <1.4 mmol/L (<55 mg/dL) and a ≥50% reduction from baseline for very high cardiovascular risk patients (including post-ACS). If not achieved with maximum statin therapy, add ezetimibe; then PCSK9 inhibitor if still not at goal.",
+    points: ["Very high CVD risk target: LDL-C <1.4 mmol/L AND ≥50% reduction", "Ezetimibe adds ~15–20% further LDL-C reduction on top of statin", "PCSK9 inhibitors (alirocumab, evolocumab) reduce LDL by 50–60% further"]
+  },
+  {
+    cat: "endo", catLabel: "Endocarditis",
+    q: "A patient with suspected IE has three sets of blood cultures drawn. Which organism is an absolute (major) Duke criterion if found on blood cultures?",
+    opts: ["Streptococcus pneumoniae", "Staphylococcus aureus in a single bottle", "Coxiella burnetii (single positive)", "Streptococcus bovis in a single culture"],
+    ans: 2,
+    explanation: "Coxiella burnetii (Q fever endocarditis) — a single positive blood culture or anti-phase I IgG titre >1:800 — constitutes a major Duke criterion due to its near-diagnostic specificity for endocarditis. Typical microbiological major criteria require two positive cultures with typical organisms or persistently positive cultures.",
+    points: ["Major Duke microbiological criteria: typical organism in 2+ cultures, persistent bacteraemia, or Coxiella burnetii", "S. aureus bacteraemia without another source → treat as IE until proven otherwise", "Culture-negative IE: consider Coxiella, Bartonella, Tropheryma whipplei, HACEK organisms"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "Aortic regurgitation on echo shows a jet width/LVOT ratio of 65%, pressure half-time 200ms, and LV end-diastolic diameter 72mm. What additional finding would prompt surgical intervention in this asymptomatic patient?",
+    opts: ["LV EF 62% and LVESD 44mm", "LV EF 65% and LVESD 35mm", "Aortic root 42mm", "Isolated AR without haemodynamic changes"],
+    ans: 0,
+    explanation: "In severe chronic aortic regurgitation, surgery is indicated in asymptomatic patients when LV EF drops below 50% or LV end-systolic diameter exceeds 50mm (or ≥25mm/m² BSA). An LVESD of 44mm with EF 62% is approaching the surgical threshold — if EF drops or LVESD increases, surgery is indicated.",
+    points: ["Surgery in asymptomatic severe AR: EF <50% or LVESD ≥50mm (or ≥25mm/m² BSA)", "Also operate if undergoing cardiac surgery for another reason", "Vasodilators (ACEi/ARBs, nifedipine) may delay surgery in asymptomatic patients with normal LV function"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "Which antihypertensive agent is contraindicated in pregnancy due to teratogenicity?",
+    opts: ["Methyldopa", "Labetalol", "Nifedipine", "ACE inhibitors"],
+    ans: 3,
+    explanation: "ACE inhibitors and ARBs are contraindicated in pregnancy (especially second and third trimesters) as they cause fetotoxicity — oligohydramnios, renal dysplasia, IUGR, and neonatal renal failure. Methyldopa, labetalol, and nifedipine are safe in pregnancy.",
+    points: ["Safe in pregnancy: methyldopa (first-line), labetalol, nifedipine SR", "Avoid: ACEi, ARBs, direct renin inhibitors, spironolactone", "Pre-eclampsia: IV labetalol or hydralazine for acute severe hypertension"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 60-year-old man with AF (CHADS₂-VASc score of 4) requires anticoagulation. He has no contraindications. Which anticoagulant is preferred over warfarin?",
+    opts: ["Warfarin", "Aspirin + clopidogrel", "Direct oral anticoagulant (DOAC) e.g. rivaroxaban or apixaban", "Heparin infusion long-term"],
+    ans: 2,
+    explanation: "DOACs (apixaban, rivaroxaban, dabigatran, edoxaban) are preferred over vitamin K antagonists (warfarin) in non-valvular AF for stroke prevention. They have equivalent or superior efficacy, lower risk of intracranial haemorrhage, no INR monitoring required, and fewer drug interactions.",
+    points: ["DOACs preferred in non-valvular AF; warfarin still required in mechanical valves and rheumatic mitral stenosis", "Apixaban and edoxaban have lowest bleeding rates in trials", "CHADS₂-VASc ≥2 (men) or ≥3 (women): anticoagulate; score 1 (men)/2 (women): individualise decision"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "Which beta-blocker has Level A evidence for mortality reduction in HFrEF and is approved for this indication?",
+    opts: ["Atenolol", "Metoprolol succinate (CR/XL)", "Propranolol", "Sotalol"],
+    ans: 1,
+    explanation: "Metoprolol succinate (extended-release), carvedilol, and bisoprolol are the only three beta-blockers with Level A evidence for mortality benefit in HFrEF. Atenolol, propranolol, and sotalol have not been shown to reduce mortality in HFrEF.",
+    points: ["Three evidence-based beta-blockers in HFrEF: bisoprolol, carvedilol, metoprolol succinate", "Start low, go slow; up-titrate every 2 weeks as tolerated", "Do not start in acute decompensated HF; continue in patients already established on them"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A 50-year-old man is admitted with anterior STEMI and undergoes successful primary PCI. On day 3 he develops severe dyspnoea. Echo shows new VSD. What is the diagnosis?",
+    opts: ["Papillary muscle rupture causing acute MR", "Post-infarction pericarditis", "Ventricular septal defect (mechanical complication)", "Pulmonary embolism"],
+    ans: 2,
+    explanation: "Post-MI VSD is a rare but life-threatening mechanical complication typically occurring 3–5 days post-MI (or earlier with primary PCI). It presents with acute haemodynamic deterioration, new harsh pansystolic murmur, and right heart failure. Surgical repair is definitive; IABP and temporary mechanical support bridge to surgery.",
+    points: ["Mechanical complications post-MI: free wall rupture, papillary muscle rupture (acute MR), VSD", "VSD: pansystolic murmur, step-up in O₂ saturation at RV level on Swan-Ganz catheter", "Timing of surgery is controversial; cardiogenic shock → immediate surgery"]
+  },
+  {
+    cat: "endo", catLabel: "Endocarditis",
+    q: "Streptococcus bovis (S. gallolyticus) bacteraemia or endocarditis is associated with which underlying condition that should be investigated?",
+    opts: ["Renal cell carcinoma", "Colorectal neoplasia (polyps or carcinoma)", "Hepatocellular carcinoma", "Ovarian cysts"],
+    ans: 1,
+    explanation: "S. bovis (now reclassified as S. gallolyticus) bacteraemia or endocarditis is strongly associated with colorectal cancer and polyps. All patients with confirmed S. gallolyticus endocarditis or bacteraemia should undergo colonoscopy to exclude colorectal malignancy.",
+    points: ["S. bovis type I (S. gallolyticus subsp. gallolyticus) most strongly associated with CRC", "Up to 25–50% have coincident colorectal neoplasia", "Colonoscopy should be performed in all cases — malignancy may be occult"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "Which imaging modality is considered the gold standard for diagnosing and classifying aortic dissection?",
+    opts: ["Chest X-ray", "Transthoracic echocardiography (TTE)", "CT aortography with contrast", "MRI aortography"],
+    ans: 2,
+    explanation: "CT aortography is the gold standard for diagnosing aortic dissection — it rapidly identifies the entry tear, extent of dissection, involvement of branch vessels, and complications such as haemopericardium or aortic regurgitation. It is available 24/7 and guides surgical or endovascular planning.",
+    points: ["CXR: widened mediastinum in ~60% — neither sensitive nor specific; never rules out dissection", "TTE/TOE: complementary, assesses AR, pericardial effusion; TOE more sensitive than TTE", "MRI: high accuracy but time-consuming — not practical in acute setting"]
+  },
+  {
+    cat: "valve", catLabel: "Valvular Disease",
+    q: "A 72-year-old woman has severe symptomatic aortic stenosis. Which clinical sign is most consistent with severe AS on examination?",
+    opts: ["Wide pulse pressure", "Slow-rising, low-volume pulse (pulsus parvus et tardus)", "Collapsing (water-hammer) pulse", "Diastolic murmur at the aortic area"],
+    ans: 1,
+    explanation: "Severe AS classically produces pulsus parvus et tardus — a pulse that is both low volume (parvus) and slow-rising (tardus) due to reduced stroke volume and the mechanical obstruction to outflow. Wide and collapsing pulse are features of aortic regurgitation.",
+    points: ["AS murmur: harsh ejection systolic, radiates to carotids, peaks late in systole (severe)", "Paradoxical splitting of S2 in severe AS (delayed aortic valve closure)", "Severe AS triad of symptoms: angina, syncope, dyspnoea — poor prognosis without intervention"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A patient in the coronary care unit develops a broad complex tachycardia (BCT) at 170 bpm. Which ECG feature most strongly favours ventricular tachycardia over SVT with aberrancy?",
+    opts: ["Heart rate >150 bpm", "QRS duration 120ms", "Atrioventricular dissociation", "Regular rhythm"],
+    ans: 2,
+    explanation: "AV dissociation (P waves independent of QRS complexes) is the most specific ECG criterion for VT. Other VT features include concordance in precordial leads, QRS >160ms, northwest axis, and capture/fusion beats. In doubt, treat as VT.",
+    points: ["Brugada algorithm, Vereckei algorithm, and RWPT criteria help distinguish VT from SVT with aberrancy", "If in doubt: treat as VT (the safer assumption)", "LBBB morphology + superior axis → VT (SVT with LBBB has inferior or normal axis)"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "Which drug, in addition to ACEi/ARB and diuretics, is recommended in acute HF to reduce preload and pulmonary congestion when BP is adequate (≥90 mmHg)?",
+    opts: ["Dobutamine", "IV furosemide only", "IV nitrates (GTN infusion)", "Levosimendan"],
+    ans: 2,
+    explanation: "IV nitrates (GTN) reduce preload (venodilation) and afterload and are recommended in acute HF with SBP >90 mmHg to rapidly reduce pulmonary oedema. They are particularly useful in hypertensive acute HF. Avoid in severe aortic/mitral stenosis or right ventricular failure.",
+    points: ["IV GTN: start at 10–20 mcg/min, titrate to SBP effect; avoid if SBP <90 mmHg", "Hypertensive AHF: IV nitrates + diuretics are first-line", "Tachyphylaxis develops after 24–48h of continuous GTN — consider alternative vasodilators"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A 65-year-old man has a CT calcium score (CAC) of 450 (>75th percentile for age). He has no known CVD. How does this affect his management?",
+    opts: ["No change — CAC does not influence clinical decisions", "Statin initiation recommended given reclassification to high risk", "Immediate coronary angiography", "Aspirin initiation regardless of other risk factors"],
+    ans: 1,
+    explanation: "A CAC score >100 (or >75th percentile for age/sex) reclassifies patients into a higher cardiovascular risk category and strongly supports statin initiation. CAC = 0 can help avoid statins in borderline-risk individuals (MESA trial data). Aspirin is not routinely recommended for primary prevention.",
+    points: ["CAC 1–99: moderate risk; CAC ≥100 or >75th percentile: high risk", "CAC = 0: very low 10-year ASCVD risk — consider withholding statin in borderline risk", "ESC/ACC guidelines incorporate CAC as a 'risk modifier' in statin decision-making"]
+  },
+  {
+    cat: "htn", catLabel: "Hypertension",
+    q: "Which finding may suggest a diagnosis of renovascular hypertension when screening a young hypertensive patient?",
+    opts: ["Polycythaemia", "Hypokalaemia with elevated bicarbonate", "Flash pulmonary oedema episodes", "Elevated urine metanephrines"],
+    ans: 2,
+    explanation: "Episodic 'flash' pulmonary oedema with severe hypertension can occur in bilateral renal artery stenosis (Pickering syndrome). Other clues: young patient, onset <30y (fibromuscular dysplasia) or elderly patient with atherosclerotic RAS, abdominal bruit, resistant hypertension, unexplained renal impairment.",
+    points: ["Investigate renovascular HTN: Doppler ultrasound, CT/MR angiography, nuclear renography", "Fibromuscular dysplasia: young women, responds well to percutaneous transluminal angioplasty", "Atherosclerotic RAS: stent provides no additional benefit over optimal medical therapy (CORAL trial)"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "A 55-year-old man has a permanent pacemaker implanted for complete heart block. Six months later, he presents with dyspnoea and an echo shows LVEF reduced from 60% to 40%. What is the most likely cause?",
+    opts: ["Lead-related endocarditis", "Pacemaker pocket haematoma", "Pacemaker-induced cardiomyopathy (dyssynchrony)", "Lead displacement causing atrial undersensing"],
+    ans: 2,
+    explanation: "Chronic RV apical pacing causes dyssynchronous LV contraction (similar to LBBB), leading to pacemaker-induced cardiomyopathy in ~10–20% of patients. Treatment options include upgrading to CRT device (biventricular pacing) or His-bundle/left bundle branch area pacing to restore synchrony.",
+    points: ["Risk factors for pacing-induced CMP: high pacing burden (>40%), pre-existing LV dysfunction", "Consider His-bundle pacing or LBBAP (left bundle branch area pacing) to maintain synchrony", "Upgrade to CRT-P/D if symptomatic HF develops with high RV pacing burden"]
+  },
+  {
+    cat: "aorta", catLabel: "Aortic Disease",
+    q: "In an acute Type A aortic dissection, which cardiac complication occurs due to retrograde extension of the dissection flap?",
+    opts: ["Ventricular septal defect", "Aortic regurgitation", "Left ventricular aneurysm", "Papillary muscle rupture"],
+    ans: 1,
+    explanation: "Retrograde dissection in Type A aortic dissection can involve the aortic root, causing aortic valve incompetence (acute severe AR) and potentially extending into the coronary ostia (causing acute MI, typically inferior — RCA most commonly involved). Cardiac tamponade can result from haemopericardium.",
+    points: ["Type A dissection complications: AR (30–40%), coronary ischaemia, tamponade, stroke", "Coronary involvement → inferior STEMI (RCA most common) — thrombolysis contraindicated!", "Haemopericardium with tamponade → cardiogenic shock; pericardiocentesis may be fatal — surgical decompression"]
+  },
+  {
+    cat: "hf", catLabel: "Heart Failure",
+    q: "Sacubitril/valsartan (ARNi) was shown to be superior to enalapril in reducing CV mortality and HF hospitalisation in which landmark trial?",
+    opts: ["RALES trial", "PARADIGM-HF trial", "EMPHASIS-HF trial", "MERIT-HF trial"],
+    ans: 1,
+    explanation: "The PARADIGM-HF trial demonstrated that sacubitril/valsartan (ARNi) was superior to enalapril in reducing CV death and HF hospitalisation in HFrEF. It is now first-line in guidelines, replacing ACEi/ARB in patients who tolerate ACEi and can make the switch.",
+    points: ["ARNi inhibits neprilysin (↑ natriuretic peptides) + blocks angiotensin II receptor", "Washout period of 36h required when switching from ACEi → sacubitril/valsartan (risk of angioedema)", "Do not co-prescribe with ACEi; can combine with beta-blocker and MRA"]
+  },
+  {
+    cat: "valve", catLabel: "Valvular Disease",
+    q: "A 34-year-old woman with rheumatic mitral stenosis develops AF. Her INR on warfarin is consistently 2.5–3.5. Can she switch to a DOAC?",
+    opts: ["Yes, rivaroxaban is superior", "Yes, apixaban has equivalent efficacy", "No, warfarin is the only anticoagulant recommended in rheumatic MS", "Yes, dabigatran may be used if INR is unstable"],
+    ans: 2,
+    explanation: "DOACs are contraindicated in rheumatic (moderate-severe) mitral stenosis and mechanical prosthetic heart valves. The RE-ALIGN trial showed dabigatran was inferior to warfarin in mechanical valves. Warfarin with therapeutic INR 2–3 (or 2.5–3.5) remains the only recommended anticoagulant in these situations.",
+    points: ["DOACs contraindicated: mechanical valves (RE-ALIGN trial), moderate-severe rheumatic MS", "DOACs are safe and preferred in: bioprosthetic valves (>3 months post-op), mitral valve repair, AS, AR, TR", "Target INR in rheumatic MS + AF: 2.0–3.0 (ESC) or 2.5–3.5 (ACC)"]
+  },
+  {
+    cat: "cad", catLabel: "Coronary Artery Disease",
+    q: "A 50-year-old woman has CCS class II stable angina. CTCA shows 70% stenosis in the proximal LAD. FFR measured at angiography is 0.85. What is the significance of this FFR value?",
+    opts: ["Haemodynamically significant — proceed with PCI", "Not haemodynamically significant — continue medical therapy", "Borderline — reassess with stress testing", "High risk — refer for CABG"],
+    ans: 1,
+    explanation: "FFR (fractional flow reserve) ≤0.80 indicates haemodynamically significant stenosis warranting revascularisation. An FFR of 0.85 is above this threshold, indicating the lesion does not cause significant ischaemia, and medical therapy is preferred. The DEFER and FAME trials validated this approach.",
+    points: ["FFR ≤0.80 = significant ischaemia → PCI improves outcomes (FAME-2 trial)", "FFR 0.81–1.00 = non-significant → defer PCI; outcomes equivalent to revascularisation with medical therapy alone", "iFR (instantaneous wave-free ratio) ≤0.89 is equivalent to FFR ≤0.80"]
+  },
+  {
+    cat: "arrhythmia", catLabel: "Arrhythmia",
+    q: "Adenosine is given to terminate a narrow complex SVT. The rhythm terminates transiently and then restarts. What does this suggest about the tachycardia mechanism?",
+    opts: ["Focal atrial tachycardia with automaticity", "AVNRT", "Atrial flutter", "AVRT using accessory pathway"],
+    ans: 0,
+    explanation: "Adenosine terminates re-entrant tachycardias (AVNRT, AVRT) permanently. Transient termination followed by re-initiation — or slowing of the ventricular rate to reveal an underlying atrial tachycardia that persists — suggests focal atrial tachycardia due to enhanced automaticity. Treatment includes verapamil, beta-blockers, or catheter ablation.",
+    points: ["Adenosine: terminates AV nodal-dependent tachycardias; reveals underlying atrial tachycardia", "Focal AT: may arise from crista terminalis, pulmonary veins, or CS ostium", "Catheter ablation is curative for focal AT if pharmacotherapy fails"]
+  }
+];
+
+const CATEGORIES = [
+  { id: "all", label: "All Topics" },
+  { id: "arrhythmia", label: "Arrhythmia" },
+  { id: "hf", label: "Heart Failure" },
+  { id: "cad", label: "Coronary Disease" },
+  { id: "endo", label: "Endocarditis" },
+  { id: "aorta", label: "Aortic Disease" },
+  { id: "htn", label: "Hypertension" },
+  { id: "valve", label: "Valvular" },
+];
+
+const CAT_STYLES = {
+  arrhythmia: "cat-arrhythmia", hf: "cat-hf", cad: "cat-cad",
+  endo: "cat-endo", aorta: "cat-aorta", htn: "cat-htn", valve: "cat-valve",
+};
+
+let filtered = [...cards];
+let currentIdx = 0;
+let isFlipped = false;
+let answered = new Set();
+let score = 0;
+
+function buildFilters() {
+  const row = document.getElementById("filterRow");
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "filter-btn" + (cat.id === "all" ? " active" : "");
+    btn.textContent = cat.label;
+    btn.dataset.cat = cat.id;
+    btn.onclick = () => applyFilter(cat.id);
+    row.appendChild(btn);
+  });
+}
+
+function applyFilter(catId) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.toggle("active", b.dataset.cat === catId));
+  filtered = catId === "all" ? [...cards] : cards.filter(c => c.cat === catId);
+  currentIdx = 0; isFlipped = false; answered.clear(); score = 0;
+  document.getElementById("completedScreen").classList.remove("visible");
+  document.getElementById("mainArea").style.display = "";
+  renderCard(); updateProgress();
+}
+
+function renderCard() {
+  const card = filtered[currentIdx];
+  const front = document.getElementById("cardFront");
+  const back = document.getElementById("cardBack");
+  const alreadyAnswered = answered.has(currentIdx);
+
+  front.classList.add("active");
+  back.classList.remove("active");
+  isFlipped = false;
+  document.getElementById("flipBtn").textContent = "View Explanation";
+
+  front.innerHTML = `
+    <span class="category-tag ${CAT_STYLES[card.cat]}">${card.catLabel}</span>
+    <div class="card-number">Question ${currentIdx + 1} of ${filtered.length}</div>
+    <div class="question-text">${card.q}</div>
+    <div class="options">
+      ${card.opts.map((opt, i) => {
+        let cls = "";
+        if (alreadyAnswered) cls = (i === card.ans) ? "correct disabled" : "wrong disabled";
+        return `<button class="option ${cls}" onclick="selectOption(${i})" ${alreadyAnswered ? "disabled" : ""}><span class="option-letter">${String.fromCharCode(65+i)}.</span>${opt}</button>`;
+      }).join("")}
+    </div>
+    <div class="flip-hint">Select an answer, then click "View Explanation" to review</div>
+  `;
+
+  back.innerHTML = `
+    <span class="category-tag ${CAT_STYLES[card.cat]}">${card.catLabel}</span>
+    <div class="answer-section-label">Correct Answer</div>
+    <div class="correct-answer-text">${String.fromCharCode(65+card.ans)}. ${card.opts[card.ans]}</div>
+    <div class="explanation">${card.explanation}</div>
+    <div class="key-points">
+      ${card.points.map(p => `<div class="key-point">${p}</div>`).join("")}
+    </div>
+  `;
+}
+
+function selectOption(idx) {
+  if (answered.has(currentIdx)) return;
+  const card = filtered[currentIdx];
+  answered.add(currentIdx);
+  document.querySelectorAll(".option").forEach((opt, i) => {
+    opt.disabled = true; opt.classList.add("disabled");
+    if (i === card.ans) opt.classList.add("correct");
+    else if (i === idx && idx !== card.ans) opt.classList.add("wrong");
+  });
+  if (idx === card.ans) score++;
+  updateProgress();
+}
+
+function flipCard() {
+  const front = document.getElementById("cardFront");
+  const back = document.getElementById("cardBack");
+  isFlipped = !isFlipped;
+  if (isFlipped) {
+    front.classList.remove("active"); back.classList.add("active");
+    document.getElementById("flipBtn").textContent = "View Question";
+  } else {
+    back.classList.remove("active"); front.classList.add("active");
+    document.getElementById("flipBtn").textContent = "View Explanation";
+  }
+}
+
+function navigate(dir) {
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= filtered.length) return;
+  currentIdx = newIdx;
+  renderCard(); updateProgress();
+  if (currentIdx === filtered.length - 1 && answered.size === filtered.length) showCompleted();
+}
+
+function updateProgress() {
+  const pct = Math.max(2, ((currentIdx + 1) / filtered.length) * 100);
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progressText").textContent = `${currentIdx + 1} / ${filtered.length}`;
+  document.getElementById("scoreBadge").textContent = `Score: ${score}`;
+  document.getElementById("prevBtn").disabled = currentIdx === 0;
+  document.getElementById("nextBtn").disabled = currentIdx === filtered.length - 1;
+}
+
+function showCompleted() {
+  setTimeout(() => {
+    document.getElementById("mainArea").style.display = "none";
+    document.getElementById("completedScreen").classList.add("visible");
+    document.getElementById("finalScoreNum").textContent = `${score} / ${filtered.length}`;
+  }, 200);
+}
+
+function restart() {
+  currentIdx = 0; isFlipped = false; answered.clear(); score = 0;
+  document.getElementById("completedScreen").classList.remove("visible");
+  document.getElementById("mainArea").style.display = "";
+  renderCard(); updateProgress();
+}
+
+buildFilters(); renderCard(); updateProgress();
+</script>
+</body>
+</html>
